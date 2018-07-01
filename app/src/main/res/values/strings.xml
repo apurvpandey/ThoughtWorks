@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">ThoughtWorks</string>
+
+
+    <string name="action_settings">Settings</string>
+    <string name="apurv">Apurv</string>
+    <string name="search">Search by Name</string>
+    <string name="filter">Filter</string>
+    <string name="sort">Sort</string>
+    <string name="filter_hint">Enter you choice</string>
+    <string name="beer_style">Beer Style</string>
+    <string name="abv_content">ABV Content</string>
+    <string name="ibu">IBU Content</string>
+    <string name="ounces">Ounces</string>
+</resources>

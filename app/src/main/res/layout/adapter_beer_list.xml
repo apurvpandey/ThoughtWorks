@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardview"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/card_bottom_margin"
+    android:layout_marginLeft="@dimen/card_margin"
+    android:layout_marginRight="@dimen/card_margin"
+    android:layout_marginTop="@dimen/card_top_margin"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="@dimen/card_radius_single_project">
+
+
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="@drawable/main_background">
+
+        <ImageView
+            android:id="@+id/iv_beer"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/beer"
+            android:layout_centerVertical="true"
+            />
+
+        <LinearLayout
+            android:id="@+id/main_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:padding="@dimen/all_content_padding"
+            android:layout_toRightOf="@id/iv_beer">
+
+            <TextView
+                android:id="@+id/beerName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="label_name"
+                android:textSize="@dimen/title_text_size"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/beerStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/card_top_margin"
+                android:text="label_style" />
+
+            <TextView
+                android:id="@+id/abv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="label_abv" />
+
+            <TextView
+                android:id="@+id/ounces"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="label_ounces" />
+
+            <TextView
+                android:id="@+id/ibu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="label_ibu" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>
