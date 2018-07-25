@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context= "com.thoughtworks.apurvpandey.thoughtworks.MainActivity">
+    tools:context="com.thoughtworks.apurvpandey.thoughtworks.homeScreen.HomeScreenActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -58,16 +58,15 @@
         android:layout_gravity="bottom"
         android:indeterminate="true"
         android:visibility="gone"
-        app:spb_sections_count="5"
         app:spb_color="@color/colorAccent"
-        app:spb_speed="2.0"
-        app:spb_stroke_width="4dp"
-        app:spb_stroke_separator_length="4dp"
-        app:spb_reversed="true"
         app:spb_mirror_mode="true"
         app:spb_progressiveStart_activated="true"
         app:spb_progressiveStart_speed="1.5"
         app:spb_progressiveStop_speed="3.4"
-        />
+        app:spb_reversed="true"
+        app:spb_sections_count="5"
+        app:spb_speed="2.0"
+        app:spb_stroke_separator_length="4dp"
+        app:spb_stroke_width="4dp" />
 
 </android.support.design.widget.CoordinatorLayout>

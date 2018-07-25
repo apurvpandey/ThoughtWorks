@@ -7,9 +7,15 @@
     <string name="search">Search by Name</string>
     <string name="filter">Filter</string>
     <string name="sort">Sort</string>
-    <string name="filter_hint">Enter you choice</string>
+    <string name="filter_hint">ABV Content</string>
     <string name="beer_style">Beer Style</string>
     <string name="abv_content">ABV Content</string>
     <string name="ibu">IBU Content</string>
     <string name="ounces">Ounces</string>
+    <string name="sort_beer">Sort Beers</string>
+    <string name="sort_beer_alphabetically">Sort Alphabetically?</string>
+    <string name="filter_beer">Filter Beers</string>
+    <string name="filter_by">Filter by</string>
+    <string name="cancel">Cancel</string>
+    <string name="action_cancelled">Action cancelled by you</string>
 </resources>
