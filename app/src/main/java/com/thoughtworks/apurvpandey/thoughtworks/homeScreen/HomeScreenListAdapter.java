@@ -59,9 +59,9 @@ public class HomeScreenListAdapter extends RecyclerView.Adapter<HomeScreenListAd
             super(itemView);
 
             tvBeerName = itemView.findViewById(R.id.beerName);
-            tvBeerStyle =  itemView.findViewById(R.id.beerStyle);
-            tvAbv =  itemView.findViewById(R.id.abv);
-            tvOunces =  itemView.findViewById(R.id.ounces);
+            tvBeerStyle = itemView.findViewById(R.id.beerStyle);
+            tvAbv = itemView.findViewById(R.id.abv);
+            tvOunces = itemView.findViewById(R.id.ounces);
             tvIbu = itemView.findViewById(R.id.ibu);
 
         }

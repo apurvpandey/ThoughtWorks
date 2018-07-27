@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 
-public class HomeScreenActivity extends AppCompatActivity implements HomeScreenContract, HomeScreenContract.OnDialogSelectionListener{
+public class HomeScreenActivity extends AppCompatActivity implements HomeScreenContract, HomeScreenContract.OnDialogSelectionListener, MaterialSearchView.OnQueryTextListener, MaterialSearchView.SearchViewListener {
 
     private RecyclerView recyclerView;
     private ProgressBar progressBar;
@@ -38,6 +38,7 @@ public class HomeScreenActivity extends AppCompatActivity implements HomeScreenC
         setContentView(R.layout.activity_main);
 
         initView();
+        initListener();
         homeScreenPresenter = new HomeScreenPresenter(this, new HomeScreenInteractor());
         homeScreenPresenter.fetchBeerList();
     }
@@ -49,68 +50,15 @@ public class HomeScreenActivity extends AppCompatActivity implements HomeScreenC
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         progressBar = findViewById(R.id.progressbar);
-        smoothProgressBar =  findViewById(R.id.smoothProgress);
+        smoothProgressBar = findViewById(R.id.smoothProgress);
         materialSearchView = findViewById(R.id.search_view);
         linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
-
-        setSearchViewComponents();
     }
 
-    //This is under refractoring process
-    private void setSearchViewComponents() {
-
-        materialSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                getSearchedResult(query);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                if (!MessageUtility.isNotNullOrEmpty(newText)){
-                    /*homeScreenPresenter.showProgress();
-                    homeScreenPresenter.updateView(beerList);*/
-                }
-                return true;
-
-            }
-        });
-
-        materialSearchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
-            @Override
-            public void onSearchViewShown() {
-            }
-
-            @Override
-            public void onSearchViewClosed() {
-                homeScreenListAdapter = new HomeScreenListAdapter(HomeScreenActivity.this, beerList);
-                recyclerView.setAdapter(homeScreenListAdapter);
-                homeScreenListAdapter.notifyDataSetChanged();
-                progressBar.setVisibility(View.GONE);
-            }
-        });
-    }
-
-    //This is under refractoring process
-    private void getSearchedResult(String query) {
-
-        materialSearchView.hideKeyboard(recyclerView);
-        query = query.toLowerCase();
-        final ArrayList<Beer> filteredList = new ArrayList<>();
-        for (int i = 0; i < beerList.size(); i++) {
-            final String beerName = beerList.get(i).getName().toLowerCase();
-            if (beerName.contains(query)) {
-                filteredList.add(beerList.get(i));
-            }
-        }
-
-        homeScreenListAdapter = new HomeScreenListAdapter(this, filteredList);
-        recyclerView.setAdapter(homeScreenListAdapter);
-        homeScreenListAdapter.notifyDataSetChanged();
-        progressBar.setVisibility(View.GONE);
-
+    private void initListener() {
+        materialSearchView.setOnQueryTextListener(this);
+        materialSearchView.setOnSearchViewListener(this);
     }
 
     @Override
@@ -169,7 +117,7 @@ public class HomeScreenActivity extends AppCompatActivity implements HomeScreenC
 
     @Override
     public void showDialog(DialogType type) {
-        switch (type){
+        switch (type) {
             case SORT:
                 String title = getString(R.string.sort_beer);
                 String message = getString(R.string.sort_beer_alphabetically);
@@ -180,7 +128,7 @@ public class HomeScreenActivity extends AppCompatActivity implements HomeScreenC
                 String titleFilter = getString(R.string.filter_beer);
                 String messageFilter = getString(R.string.filter_by);
                 String positiveButtonMessageFilter = getString(R.string.filter);
-                String hint =  getString(R.string.abv_content);
+                String hint = getString(R.string.abv_content);
                 DialogUtil.prepareDialogWithText(this, titleFilter, messageFilter, hint, positiveButtonMessageFilter, this);
                 break;
         }
@@ -201,7 +149,6 @@ public class HomeScreenActivity extends AppCompatActivity implements HomeScreenC
 
     @Override
     public void onPositiveButtonSelection(String filterField) {
-        //Can below code be refractored more?
         homeScreenPresenter.showProgress();
         if (MessageUtility.isNotNullOrEmpty(filterField)) {
             homeScreenPresenter.filterBeerList(beerList, filterField);
@@ -214,9 +161,33 @@ public class HomeScreenActivity extends AppCompatActivity implements HomeScreenC
         MessageUtility.showSnackBar(recyclerView, message);
     }
 
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        materialSearchView.hideKeyboard(recyclerView);
+        homeScreenPresenter.showProgress();
+        homeScreenPresenter.performSearch(query.toLowerCase(), beerList);
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return true;
+    }
+
+    @Override
+    public void onSearchViewShown() {
+
+    }
+
+    @Override
+    public void onSearchViewClosed() {
+        homeScreenPresenter.fetchBeerList();
+    }
+
     //Is using enum a better approach
     public enum DialogType {
         SORT,
         FILTER
     }
+
 }
