@@ -17,19 +17,14 @@ import com.thoughtworks.apurvpandey.thoughtworks.model.Beer;
 import com.thoughtworks.apurvpandey.thoughtworks.utils.DialogUtil;
 import com.thoughtworks.apurvpandey.thoughtworks.utils.MessageUtility;
 
-import java.util.ArrayList;
-
-import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
+import java.util.List;
 
 public class HomeScreenActivity extends AppCompatActivity implements HomeScreenContract, HomeScreenContract.OnDialogSelectionListener, MaterialSearchView.OnQueryTextListener, MaterialSearchView.SearchViewListener {
 
     private RecyclerView recyclerView;
     private ProgressBar progressBar;
-    private HomeScreenListAdapter homeScreenListAdapter;
-    private LinearLayoutManager linearLayoutManager;
-    private SmoothProgressBar smoothProgressBar;
     private MaterialSearchView materialSearchView;
-    private ArrayList<Beer> beerList;
+    private List<Beer> beerList;
     private HomeScreenPresenter homeScreenPresenter;
 
     @Override
@@ -40,19 +35,20 @@ public class HomeScreenActivity extends AppCompatActivity implements HomeScreenC
         initView();
         initListener();
         homeScreenPresenter = new HomeScreenPresenter(this, new HomeScreenInteractor());
-        homeScreenPresenter.fetchBeerList();
+        homeScreenPresenter.fetchBeerList(VolleySingleton.getInstance(this));
     }
 
 
     private void initView() {
-
-        recyclerView = findViewById(R.id.recyclerView);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         progressBar = findViewById(R.id.progressbar);
-        smoothProgressBar = findViewById(R.id.smoothProgress);
+
         materialSearchView = findViewById(R.id.search_view);
-        linearLayoutManager = new LinearLayoutManager(this);
+
+        recyclerView = findViewById(R.id.recyclerView);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
     }
 
@@ -84,7 +80,7 @@ public class HomeScreenActivity extends AppCompatActivity implements HomeScreenC
                 materialSearchView.showSearch();
                 break;
             case R.id.ic_portfolio:
-                homeScreenPresenter.fetchBeerList();
+//                homeScreenPresenter.fetchBeerList(VolleySingleton.getInstance(this));
                 break;
 
         }
@@ -103,11 +99,11 @@ public class HomeScreenActivity extends AppCompatActivity implements HomeScreenC
     }
 
     @Override
-    public void showBeerList(ArrayList<Beer> beerList) {
-        homeScreenListAdapter = new HomeScreenListAdapter(this, beerList);
+    public void showBeerList(List<Beer> beerList) {
+        HomeScreenListAdapter homeScreenListAdapter = new HomeScreenListAdapter(this, beerList);
         recyclerView.setAdapter(homeScreenListAdapter);
         homeScreenListAdapter.notifyDataSetChanged();
-        this.beerList = (ArrayList<Beer>) beerList.clone();
+        this.beerList = beerList;
     }
 
     @Override
@@ -122,14 +118,16 @@ public class HomeScreenActivity extends AppCompatActivity implements HomeScreenC
                 String title = getString(R.string.sort_beer);
                 String message = getString(R.string.sort_beer_alphabetically);
                 String positiveButtonMessage = getString(R.string.sort);
-                DialogUtil.prepareDialog(this, title, message, positiveButtonMessage, this);
+                //DialogUtil.prepareDialog(this, title, message, positiveButtonMessage, this);
+                DialogUtil.showSortDialog(this, title, this);
                 break;
             case FILTER:
                 String titleFilter = getString(R.string.filter_beer);
                 String messageFilter = getString(R.string.filter_by);
                 String positiveButtonMessageFilter = getString(R.string.filter);
                 String hint = getString(R.string.abv_content);
-                DialogUtil.prepareDialogWithText(this, titleFilter, messageFilter, hint, positiveButtonMessageFilter, this);
+                //DialogUtil.prepareDialogWithText(this, titleFilter, messageFilter, hint, positiveButtonMessageFilter, this);
+                DialogUtil.showFilterDialog(this, titleFilter, this);
                 break;
         }
 
@@ -142,16 +140,11 @@ public class HomeScreenActivity extends AppCompatActivity implements HomeScreenC
     }
 
     @Override
-    public void onPositiveButtonSelection() {
-        homeScreenPresenter.showProgress();
-        homeScreenPresenter.sortBeerList(beerList);
-    }
-
-    @Override
-    public void onPositiveButtonSelection(String filterField) {
+    public void onPositiveButtonSelection(String filterField, String filterValue) {
         homeScreenPresenter.showProgress();
         if (MessageUtility.isNotNullOrEmpty(filterField)) {
-            homeScreenPresenter.filterBeerList(beerList, filterField);
+            homeScreenPresenter.sortBeerList(beerList, filterField, filterValue);
+            //perform filter below
         }
     }
 
@@ -181,10 +174,9 @@ public class HomeScreenActivity extends AppCompatActivity implements HomeScreenC
 
     @Override
     public void onSearchViewClosed() {
-        homeScreenPresenter.fetchBeerList();
+//        homeScreenPresenter.fetchBeerList(VolleySingleton.getInstance(this));
     }
 
-    //Is using enum a better approach
     public enum DialogType {
         SORT,
         FILTER

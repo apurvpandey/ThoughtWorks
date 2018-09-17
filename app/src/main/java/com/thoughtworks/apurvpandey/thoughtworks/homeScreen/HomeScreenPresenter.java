@@ -1,11 +1,9 @@
 package com.thoughtworks.apurvpandey.thoughtworks.homeScreen;
 
-import android.support.annotation.WorkerThread;
-
 import com.android.volley.VolleyError;
 import com.thoughtworks.apurvpandey.thoughtworks.model.Beer;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class HomeScreenPresenter implements HomeScreenInteractor.OnApiCallFinishedListener {
 
@@ -17,19 +15,18 @@ public class HomeScreenPresenter implements HomeScreenInteractor.OnApiCallFinish
         this.interactor = interactor;
     }
 
-    public void fetchBeerList() {
+    public void fetchBeerList(VolleySingleton instance) {
         if (contract != null) {
             contract.showProgress();
         }
 
-        interactor.makeApiCall(this);
+        interactor.makeApiCall(this, instance);
     }
 
     public void onDestroy() {
         contract = null;
     }
 
-    @WorkerThread
     public void showDialog(HomeScreenActivity.DialogType type) {
         if (contract != null) {
             contract.showDialog(type);
@@ -37,7 +34,7 @@ public class HomeScreenPresenter implements HomeScreenInteractor.OnApiCallFinish
     }
 
     @Override
-    public void onSuccess(ArrayList<Beer> beerList) {
+    public void onSuccess(List<Beer> beerList) {
         if (contract != null) {
             contract.hideProgress();
             contract.showBeerList(beerList);
@@ -52,16 +49,8 @@ public class HomeScreenPresenter implements HomeScreenInteractor.OnApiCallFinish
         }
     }
 
-    public void sortBeerList(ArrayList<Beer> beerList) {
-        ArrayList<Beer> list = interactor.sortList(beerList);
-        contract.showBeerList(list);
-        if (contract != null) {
-            contract.hideProgress();
-        }
-    }
-
-    public void filterBeerList(ArrayList<Beer> beerList, String filterField) {
-        ArrayList<Beer> list = interactor.filterListByAbvContent(beerList, filterField);
+    public void sortBeerList(List<Beer> beerList, String filterField, String filterValue) {
+        List<Beer> list = interactor.sortList(beerList, filterField, filterValue);
         contract.showBeerList(list);
         if (contract != null) {
             contract.hideProgress();
@@ -74,11 +63,12 @@ public class HomeScreenPresenter implements HomeScreenInteractor.OnApiCallFinish
         }
     }
 
-    public void performSearch(String query, ArrayList<Beer> beerList) {
-        ArrayList<Beer> list = interactor.filterListByName(beerList, query);
+    public void performSearch(String query, List<Beer> beerList) {
+        List<Beer> list = interactor.filterListByName(beerList, query);
         contract.showBeerList(list);
         if (contract != null) {
             contract.hideProgress();
         }
     }
+
 }

@@ -1,5 +1,6 @@
 package com.thoughtworks.apurvpandey.thoughtworks.homeScreen;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -11,18 +12,19 @@ import android.widget.TextView;
 import com.thoughtworks.apurvpandey.thoughtworks.R;
 import com.thoughtworks.apurvpandey.thoughtworks.model.Beer;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class HomeScreenListAdapter extends RecyclerView.Adapter<HomeScreenListAdapter.VH> {
 
-    private Context context;
-    private ArrayList<Beer> listOfBeer;
+    private final Context context;
+    private final List<Beer> listOfBeer;
 
-    HomeScreenListAdapter(Context context, ArrayList<Beer> beerList) {
+    HomeScreenListAdapter(Context context, List<Beer> beerList) {
         this.context = context;
         listOfBeer = beerList;
     }
 
+    @NonNull
     @Override
     public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
@@ -31,6 +33,7 @@ public class HomeScreenListAdapter extends RecyclerView.Adapter<HomeScreenListAd
     }
 
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void onBindViewHolder(@NonNull VH holder, int position) {
 

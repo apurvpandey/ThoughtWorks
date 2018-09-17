@@ -1,6 +1,7 @@
 package com.thoughtworks.apurvpandey.thoughtworks.utils;
 
 import android.support.design.widget.Snackbar;
+import android.text.TextUtils;
 import android.view.View;
 
 public class MessageUtility {
@@ -12,6 +13,6 @@ public class MessageUtility {
     }
 
     public static boolean isNotNullOrEmpty(final String stringValue) {
-        return (stringValue != null && !(stringValue.trim().isEmpty()) && !(stringValue.trim().equalsIgnoreCase(""))) ? true : false;
+        return TextUtils.isEmpty(stringValue.trim());
     }
 }

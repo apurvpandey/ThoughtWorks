@@ -6,7 +6,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.thoughtworks.apurvpandey.thoughtworks.model.Beer;
-import com.thoughtworks.apurvpandey.thoughtworks.network.VolleySingleton;
 import com.thoughtworks.apurvpandey.thoughtworks.utils.MessageUtility;
 
 import org.json.JSONArray;
@@ -16,13 +15,13 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 public class HomeScreenInteractor {
 
-    public void makeApiCall(final OnApiCallFinishedListener listener) {
+    public void makeApiCall(final OnApiCallFinishedListener listener, VolleySingleton instance) {
         final String BASE_URL = "http://starlord.hackerearth.com/beercraft";
-        VolleySingleton volleySingleton = VolleySingleton.getInstance();
-        RequestQueue requestQueue = volleySingleton.getRequestQueue();
+        RequestQueue requestQueue = instance.getRequestQueue();
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, BASE_URL, null,
                 new Response.Listener<JSONArray>() {
@@ -46,6 +45,7 @@ public class HomeScreenInteractor {
 
             try {
                 Beer beer = new Beer();
+
                 JSONObject jsonProject = response.getJSONObject(i);
 
                 beer.setAbv(jsonProject.getString("abv"));
@@ -66,21 +66,65 @@ public class HomeScreenInteractor {
         listener.onSuccess(beerList);
     }
 
-    //Below compaartor can be modified according to requirement
-    public ArrayList<Beer> sortList(ArrayList<Beer> list) {
-        Collections.sort(list, new Comparator<Beer>() {
-            String nameLeft, nameRight;
+    //Below compartor can be modified according to requirement
+    public List<Beer> sortList(List<Beer> list, final String filterField, String filterValue) {
 
-            @Override
-            public int compare(Beer beer1, Beer beer2) {
-                nameLeft = beer1.getName();
-                nameRight = beer2.getName();
-                return nameLeft.compareTo(nameRight);
+        if (filterField.contains("Sort Alphabetically?")) {
+            Collections.sort(list, new Comparator<Beer>() {
+                String nameLeft, nameRight;
+
+                @Override
+                public int compare(Beer beer1, Beer beer2) {
+                    nameLeft = beer1.getName();
+                    nameRight = beer2.getName();
+                    return nameLeft.compareTo(nameRight);
+                }
+            });
+
+        } else if (filterField.contains("Sort By Alcohol content")) {
+            Collections.sort(list, new Comparator<Beer>() {
+                String nameLeft, nameRight;
+
+                @Override
+                public int compare(Beer beer1, Beer beer2) {
+                    nameLeft = beer1.getAbv();
+                    nameRight = beer2.getAbv();
+                    if (filterField.contains("Sort By Alcohol content (Ascending)"))
+                        return nameLeft.compareTo(nameRight);
+                    else return nameRight.compareTo(nameLeft);
+                }
+
+            });
+        } else if (filterField.contains("Beer Style")) {
+            List<Beer> filteredList = new ArrayList<>();
+            for (int i = 0; i < list.size(); i++) {
+                if (MessageUtility.isNotNullOrEmpty(list.get(i).getStyle())) {
+                    if (list.get(i).getStyle().contains(filterValue))
+                        filteredList.add(list.get(i));
+                }
+            }
+        } else if (filterField.contains("IBU Content")) {
+            List<Beer> filteredList = new ArrayList<>();
+            for (int i = 0; i < list.size(); i++) {
+                if (MessageUtility.isNotNullOrEmpty(list.get(i).getIbu())) {
+                    final int ibu = Integer.parseInt(list.get(i).getIbu());
+                    final int filteredContent = Integer.parseInt(filterValue);
+                    if (ibu == filteredContent)
+                        filteredList.add(list.get(i));
+                }
+            }
+        } else if (filterField.contains("Ounces")) {
+            List<Beer> filteredList = new ArrayList<>();
+            for (int i = 0; i < list.size(); i++) {
+                final double ounces = list.get(i).getOunces();
+                final double filterContent = Double.parseDouble(filterValue);
+                int result = Double.compare(ounces, filterContent);
+                if (result == 0) {
+                    filteredList.add(list.get(i));
+                }
 
             }
-
-        });
-
+        }
         return list;
     }
 
@@ -99,8 +143,8 @@ public class HomeScreenInteractor {
         return filteredList;
     }
 
-    public ArrayList<Beer> filterListByName(ArrayList<Beer> beerList, String query) {
-        final ArrayList<Beer> filteredList = new ArrayList<>();
+    public List<Beer> filterListByName(List<Beer> beerList, String query) {
+        final List<Beer> filteredList = new ArrayList<>();
         for (int i = 0; i < beerList.size(); i++) {
             if (MessageUtility.isNotNullOrEmpty(beerList.get(i).getName())) {
                 final String beerName = beerList.get(i).getName().toLowerCase();
@@ -113,7 +157,7 @@ public class HomeScreenInteractor {
     }
 
     interface OnApiCallFinishedListener {
-        void onSuccess(ArrayList<Beer> beerList);
+        void onSuccess(List<Beer> beerList);
 
         void onFailure(VolleyError error);
     }

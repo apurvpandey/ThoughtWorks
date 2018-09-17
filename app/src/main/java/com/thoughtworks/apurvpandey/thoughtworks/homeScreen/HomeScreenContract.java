@@ -3,7 +3,7 @@ package com.thoughtworks.apurvpandey.thoughtworks.homeScreen;
 import com.android.volley.VolleyError;
 import com.thoughtworks.apurvpandey.thoughtworks.model.Beer;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface HomeScreenContract {
 
@@ -11,17 +11,19 @@ public interface HomeScreenContract {
 
     void hideProgress();
 
-    void showBeerList(ArrayList<Beer> beerList);
+    void showBeerList(List<Beer> beerList);
 
     void showError(VolleyError error);
 
     void showDialog(HomeScreenActivity.DialogType type);
 
     interface OnDialogSelectionListener {
-        void onPositiveButtonSelection();
+        //void onPositiveButtonSelection();
 
-        void onPositiveButtonSelection(String filterField);
+        void onPositiveButtonSelection(String filterField, String filterValue);
 
         void onNegativeButtonSelectionListener();
     }
+
+
 }
